@@ -19,10 +19,26 @@ exports.getUserContacts = async (req, res) => {
   res.json({ success: true, data: contacts });
 };
 
-exports.updateContact = (req, res) => {
-  res.send("contact updated...");
+exports.updateContact = async (req, res, next) => {
+  let contact = await Contact.findById(req.params.id);
+
+  if (!contact)
+    return next(
+      new ErrorResponse(`Contact with id ${req.params.id} is not found`, 404)
+    );
+
+  try {
+    contact = await Contact.findByIdAndUpdate(req.params.id, req.body, {
+      runValidators: true,
+      new: true,
+    });
+
+    res.json({ success: true, data: contact });
+  } catch (error) {
+    return next(new ErrorResponse(`Contact not updated.`, 500));
+  }
 };
 
-exports.deleteContact = (req, res) => {
+exports.deleteContact = (req, res, next) => {
   res.send("contacts deleted...");
 };
