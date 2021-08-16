@@ -39,6 +39,15 @@ exports.updateContact = async (req, res, next) => {
   }
 };
 
-exports.deleteContact = (req, res, next) => {
-  res.send("contacts deleted...");
+exports.deleteContact = async (req, res, next) => {
+  let contact = await Contact.findById(req.params.id);
+
+  if (!contact)
+    return next(
+      new ErrorResponse(`Contact with id ${req.params.id} is not found`, 404)
+    );
+
+  contact.remove();
+
+  res.json({ success: true, msg: "Contact removed" });
 };
