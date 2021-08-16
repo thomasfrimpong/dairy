@@ -13,8 +13,10 @@ exports.createContact = async (req, res, next) => {
   }
 };
 
-exports.getUserContacts = (req, res) => {
-  res.send("contact gotten...");
+exports.getUserContacts = async (req, res) => {
+  const contacts = await Contact.find({ user: req.user.id });
+
+  res.json({ success: true, data: contacts });
 };
 
 exports.updateContact = (req, res) => {
